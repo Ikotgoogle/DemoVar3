@@ -103,20 +103,6 @@ namespace DemoVar3.View {
             _CurrentPage--;
             startId -= amount;
             CurrentPage.Text = _CurrentPage.ToString();
-
-            //for(int i = startId - 1; i < amount; i++) {
-            //    if(filter != null && Books[i].Category == filter)
-            //        PagedBooks.Add(Books[i]);
-            //    else if(filter == null) {
-            //        PagedBooks.Add(Books[i]);
-            //    } else return;
-            //}
-            //BookDG.ItemsSource = PagedBooks.ToList();
-            //BookDG.Items.Refresh();
-
-
-
-
             if(filter == null) {
                 for(int i = startId - 1; i < amount * _CurrentPage; i++) {
                     try {

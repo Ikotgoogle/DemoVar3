@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DemoVar3.View"
         mc:Ignorable="d"
-        Title="WorkWindow" Height="450" Width="800">
+        Title="WorkWindow" Height="450" Width="1000">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.45*"/>
@@ -14,13 +14,13 @@
 
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="0.45*"/> 
-                <RowDefinition Height="0.5*"/> 
+                <RowDefinition Height="0.25*"/> 
+                <RowDefinition Height="0.3*"/> 
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
             <StackPanel VerticalAlignment="Center" Margin="10">
-                <Button x:Name="NewUser" Content="Зарегистрировать пользователя" Height="50"/>
+                <ComboBox x:Name="Customer" />
             </StackPanel>
 
             <StackPanel Grid.Row="1">
@@ -30,7 +30,34 @@
             </StackPanel>
 
             <StackPanel Grid.Row="2">
-                
+                <Label Content="Корзина:"/>
+                <ListView x:Name="BucketView" DataContext="{Binding Book}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Товар" >
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                            <TextBlock Text="{Binding Name}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Категория" >
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                            <TextBlock Text="{Binding Category}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn>
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Button x:Name="DeleteFromBucket" Content="Убрать" Click="DeleteFromBucket_Click"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
             </StackPanel>
 
         </Grid>
@@ -42,16 +69,32 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <StackPanel>
-                <Label Content="Страница: "/>
-                <StackPanel Orientation="Horizontal">
-                    <Button Content="-" Width="20" Name="Back" Click="Back_Click"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
 
-                    <TextBlock x:Name="CurrentPage" Width="20" FontSize="18" FontWeight="Bold"/>
-                
-                    <Button Content="+" Width="20" Name="Next" Click="Next_Click"/>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Button x:Name="MakeOrder" Content="Оформить заказ" Width="120" Height="40" Click="MakeOrder_Click"/>
                 </StackPanel>
-            </StackPanel>
+                
+                <StackPanel HorizontalAlignment="Center" Grid.Column="1">
+                    <Label Content="Страница: "/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="-" Width="20" Name="Back" Click="Back_Click"/>
+
+                        <TextBlock x:Name="CurrentPage" Width="20" FontSize="18" FontWeight="Bold"/>
+                
+                        <Button Content="+" Width="20" Name="Next" Click="Next_Click"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel VerticalAlignment="Center" Margin="10" Grid.Column="2">
+                    <Button x:Name="NewUser" Content="Зарегистрировать пользователя" Height="40"/>
+                </StackPanel>
+            </Grid>
 
             <DataGrid Grid.Row="1" x:Name="BookDG" AutoGenerateColumns="False" IsReadOnly="True" CanUserReorderColumns="False" Margin="5">
                 <DataGrid.Columns>
@@ -64,6 +107,13 @@
                     <DataGridTextColumn Header="Состав" Binding="{Binding Composition}"/>
                     <DataGridTextColumn Header="Единица" Binding="{Binding MeasuaringValue}"/>
                     <DataGridTextColumn Header="Стоимость" Binding="{Binding Cost}"/>
+                    <DataGridTemplateColumn>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button x:Name="AddToBucketBtn" Content="В корзину" Click="AddToBucketBtn_Click"/>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                 </DataGrid.Columns>
             </DataGrid>
         </Grid>

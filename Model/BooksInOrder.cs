@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace DemoVar3.Model {
     public class BooksInOrder {
         public int Id { get; set; }
-        public Order OrderID { get; set; }
-        public Book BookID { get; set; }
+        public Order OrderId { get; set; }
+        public Book BookId { get; set; }
     }
 }

@@ -26,7 +26,9 @@ namespace DemoVar3.View {
         int amount = 25, maxPage;
         string filter;
         public ObservableCollection<Book> Books { get; set; }
+        public ObservableCollection<User> Users { get; set; }
         public ObservableCollection<Book> PagedBooks { get; set; } = new ObservableCollection<Book>();
+        public ObservableCollection<Book> Bucket { get; set; } = new ObservableCollection<Book>();
 
         public List<string> FilterList = new List<string>() { "Еда", "Игрушки", "Груминг", "Аптека", "Гигиена", "Дрессировка", "Предметы обихода", "Аксессуары"};
         public WorkWindow() {
@@ -34,11 +36,15 @@ namespace DemoVar3.View {
             db.Database.EnsureCreated();
 
             db.Books.Load();
+            db.Users.Load();
+
+            Customer.ItemsSource = db.Users.Local.ToObservableCollection();
             Books = db.Books.Local.ToObservableCollection();
             BookDG.ItemsSource = PagedBooks.ToList();
-            CurrentPage.Text = _CurrentPage.ToString();
             maxPage = Books.Count / amount + 1;
+            CurrentPage.Text = _CurrentPage.ToString();
             Filter.ItemsSource = FilterList;
+            BucketView.ItemsSource = Bucket.ToList();
 
             #region books
             //Books.Clear();
@@ -157,6 +163,40 @@ namespace DemoVar3.View {
             }
             BookDG.ItemsSource = PagedBooks.ToList();
             BookDG.Items.Refresh();
+        }
+
+        private void AddToBucketBtn_Click(object sender, RoutedEventArgs e) {
+            Book b = (Book)((Button)sender).DataContext;
+            Bucket.Add(b);
+            BucketView.ItemsSource = Bucket.ToList();
+        }
+
+        private void DeleteFromBucket_Click(object sender, RoutedEventArgs e) {
+            Book b = (Book)((Button)sender).DataContext;
+            Bucket.Remove(b);
+            BucketView.ItemsSource = Bucket.ToList();
+        }
+
+        private void MakeOrder_Click(object sender, RoutedEventArgs e) {
+            if(Customer.SelectedValue == null) { MessageBox.Show("Укажите, кому будет создан заказ!"); return; }
+            Order order = new Order();
+            order.User = Customer.SelectedValue as User;
+            order.OrderDate = DateOnly.FromDateTime(DateTime.Today);
+            order.DeliveryDate = order.OrderDate.AddDays(7);
+
+            ObservableCollection<BooksInOrder> localBuscket = new ObservableCollection<BooksInOrder>();
+
+            foreach(Book book in Bucket) {
+                BooksInOrder booksInOrder = new BooksInOrder {
+                    OrderId = order,
+                    BookId = book
+                };
+                localBuscket.Add(booksInOrder);
+                db.BooksInOrders.Add(booksInOrder);
+            }
+            order.BooksInOrder = localBuscket;
+            db.Orders.Add(order);
+            db.SaveChanges();
         }
 
         private void Next_Click(object sender, RoutedEventArgs e) {

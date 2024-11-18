@@ -11,6 +11,6 @@ namespace DemoVar3.Model {
         public User User { get; set; }
         public DateOnly OrderDate { get; set; }
         public DateOnly DeliveryDate { get; set; }
-        public ObservableCollection<BooksInOrder> BooksInOrder { get; set; }
+        public virtual ICollection<BooksInOrder> BooksInOrder { get; set; }
     }
 }

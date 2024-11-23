@@ -1,5 +1,6 @@
 ﻿using DemoVar3.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -8,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -28,10 +30,11 @@ namespace DemoVar3.View {
         public User CurrentUser { get; set; }
         public ObservableCollection<Book> Books { get; set; }
         public ObservableCollection<User> Users { get; set; }
-        public ObservableCollection<Book> PagedBooks { get; set; } = new ObservableCollection<Book>();
+        public List<Book> PagedBooks { get; set; } = new List<Book>();
         public ObservableCollection<Book> Bucket { get; set; } = new ObservableCollection<Book>();
 
         public List<string> FilterList = new List<string>() { "Еда", "Игрушки", "Груминг", "Аптека", "Гигиена", "Дрессировка", "Предметы обихода", "Аксессуары" };
+        List<string> roles = new List<string>() { "Администратор", "Пользователь", "Гость" };
         public UserWindow(User user) {
             InitializeComponent();
             db.Database.EnsureCreated();
@@ -39,17 +42,7 @@ namespace DemoVar3.View {
             db.Books.Load();
             db.Users.Load();
 
-            CurrentUser = user;
-            UserName.Text = CurrentUser.Name;
-            Books = db.Books.Local.ToObservableCollection();
-            BookDG.ItemsSource = PagedBooks.OrderByDescending(b => b.IsFavourite).ToList();
-            maxPage = Books.Count / amount + 1;
-            CurrentPage.Text = _CurrentPage.ToString();
-            Filter.ItemsSource = FilterList;
-            BucketView.ItemsSource = Bucket.ToList();
-
             #region books
-            Books.Clear();
             Book book1 = new Book() { Name = "test", Category = FilterList[0], Description = "test", BrandName = "test", Animal = "test", Composition = "Test", MeasuaringValue = "test", Cost = 1000 };
             Book book2 = new Book() { Name = "test", Category = FilterList[0], Description = "test", BrandName = "test", Animal = "test", Composition = "Test", MeasuaringValue = "test", Cost = 1000 };
             Book book3 = new Book() { Name = "test", Category = FilterList[0], Description = "test", BrandName = "test", Animal = "test", Composition = "Test", MeasuaringValue = "test", Cost = 1000 };
@@ -99,39 +92,22 @@ namespace DemoVar3.View {
                                 book31, book32, book33, book34, book35, book36, book37, book38, book39, book40, book41, book42, book43);
             db.SaveChanges();
             #endregion
+            CurrentUser = user;
+            UserName.Text = CurrentUser.Name;
+            Books = db.Books.Local.ToObservableCollection();
+            BookDG.ItemsSource = PagedBooks.OrderByDescending(b => b.IsFavourite).ToList();
+            maxPage = Books.Count / amount;
+            maxPage++;
+            CurrentPage.Text = _CurrentPage.ToString();
+            Filter.ItemsSource = FilterList;
+            BucketView.ItemsSource = Bucket.ToList();
+
 
             for(int i = startId - 1; i < amount; i++) {
                 PagedBooks.Add(Books[i]);
-                BookDG.ItemsSource = PagedBooks.ToList();
             }
-        }
-
-        private void Back_Click(object sender, RoutedEventArgs e) {
-            if(_CurrentPage == 1) { return; }
-            PagedBooks.Clear();
-            _CurrentPage--;
-            startId -= amount;
-            CurrentPage.Text = _CurrentPage.ToString();
-            if(filter == null) {
-                for(int i = startId - 1; i < amount * _CurrentPage; i++) {
-                    try {
-                        PagedBooks.Add(Books[i]);
-                        BookDG.ItemsSource = PagedBooks.ToList();
-                        BookDG.Items.Refresh();
-                    }
-                    catch { return; }
-                }
-            } else if(filter != null) {
-                List<Book> filteredBooks = Books.Where(x => x.Category == filter).ToList();
-                for(int i = startId - 1; i < amount * _CurrentPage; i++) {
-                    try {
-                        PagedBooks.Add(filteredBooks[i]);
-                        BookDG.ItemsSource = PagedBooks.ToList();
-                        BookDG.Items.Refresh();
-                    }
-                    catch { return; }
-                }
-            }
+            PagedBooks.OrderByDescending(x => x.IsFavourite);
+            BookDG.ItemsSource = PagedBooks.ToList();
         }
 
         private void Next_Click(object sender, RoutedEventArgs e) {
@@ -145,7 +121,8 @@ namespace DemoVar3.View {
                 for(int i = startId - 1; i < amount * _CurrentPage; i++) {
                     try {
                         PagedBooks.Add(Books[i]);
-                        BookDG.ItemsSource = PagedBooks.ToList();
+                        PagedBooks = PagedBooks.OrderByDescending(_ => _.IsFavourite).ToList();
+                        BookDG.ItemsSource = PagedBooks;
                         BookDG.Items.Refresh();
                     }
                     catch { return; }
@@ -155,13 +132,45 @@ namespace DemoVar3.View {
                 for(int i = startId - 1; i < amount * _CurrentPage; i++) {
                     try {
                         PagedBooks.Add(filteredBooks[i]);
-                        BookDG.ItemsSource = PagedBooks.ToList();
+                        PagedBooks = PagedBooks.OrderByDescending(_ => _.IsFavourite).ToList();
+                        BookDG.ItemsSource = PagedBooks;
                         BookDG.Items.Refresh();
                     }
                     catch { return; }
                 }
             }
         }
+
+        private void Back_Click(object sender, RoutedEventArgs e) {
+            if(_CurrentPage == 1) { return; }
+            PagedBooks.Clear();
+            _CurrentPage--;
+            startId -= amount;
+            CurrentPage.Text = _CurrentPage.ToString();
+
+            if(filter == null) {
+                for(int i = startId - 1; i < amount * _CurrentPage; i++) {
+                    try {
+                        PagedBooks.Add(Books[i]);
+                        PagedBooks = PagedBooks.OrderByDescending(_ => _.IsFavourite).ToList();
+                        BookDG.ItemsSource = PagedBooks;
+                        BookDG.Items.Refresh();
+                    }
+                    catch { return; }
+                }
+            } else if(filter != null) {
+                List<Book> filteredBooks = Books.Where(x => x.Category == filter).ToList();
+                for(int i = startId - 1; i < amount * _CurrentPage; i++) {
+                    try {
+                        PagedBooks.Add(filteredBooks[i]);
+                        PagedBooks = PagedBooks.OrderByDescending(_ => _.IsFavourite).ToList();
+                        BookDG.ItemsSource = PagedBooks;
+                        BookDG.Items.Refresh();
+                    }
+                    catch { return; }
+                }
+            }
+        }        
 
         private void Filter_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             if(Filter.SelectedValue != null) {
@@ -175,10 +184,13 @@ namespace DemoVar3.View {
             List<Book> filteredBooks = Books.Where(b => b.Category == filter).ToList();
             maxPage = filteredBooks.Count / amount + 1;
 
-            for(int i = startId - 1; i < amount * _CurrentPage; i++) {
+            try { for(int i = startId - 1; i < amount * _CurrentPage; i++) {
                 PagedBooks.Add(filteredBooks[i]);
-            }
-            BookDG.ItemsSource = PagedBooks.ToList();
+            }}catch { }
+
+            
+            PagedBooks = PagedBooks.OrderByDescending(_ => _.IsFavourite).ToList();
+            BookDG.ItemsSource = PagedBooks;
             BookDG.Items.Refresh();
         }
 
@@ -193,7 +205,8 @@ namespace DemoVar3.View {
             for(int i = startId - 1; i < amount; i++) {
                 PagedBooks.Add(Books[i]);
             }
-            BookDG.ItemsSource = PagedBooks.ToList();
+            PagedBooks = PagedBooks.OrderByDescending(_ => _.IsFavourite).ToList();
+            BookDG.ItemsSource = PagedBooks;
             BookDG.Items.Refresh();
         }
 
@@ -210,29 +223,68 @@ namespace DemoVar3.View {
         }
 
         private void MakeOrder_Click(object sender, RoutedEventArgs e) {
-            Order order = new Order();
-            order.User = CurrentUser;
-            order.OrderDate = DateOnly.FromDateTime(DateTime.Today);
-            order.DeliveryDate = order.OrderDate.AddDays(7);
+            if(!(CurrentUser.Role == roles[2])) {
+                Order order = new Order();
+                order.User = CurrentUser;
+                order.OrderDate = DateOnly.FromDateTime(DateTime.Today);
+                order.DeliveryDate = order.OrderDate.AddDays(7);
 
-            ObservableCollection<BooksInOrder> localBuscket = new ObservableCollection<BooksInOrder>();
+                ObservableCollection<BooksInOrder> localBuscket = new ObservableCollection<BooksInOrder>();
 
-            foreach(Book book in Bucket) {
-                BooksInOrder booksInOrder = new BooksInOrder {
-                    OrderId = order,
-                    BookId = book
-                };
-                localBuscket.Add(booksInOrder);
-                db.BooksInOrders.Add(booksInOrder);
+                foreach(Book book in Bucket) {
+                    BooksInOrder booksInOrder = new BooksInOrder {
+                        OrderId = order,
+                        BookId = book
+                    };
+                    localBuscket.Add(booksInOrder);
+                    db.BooksInOrders.Add(booksInOrder);
+                }
+                order.BooksInOrder = localBuscket;
+                db.Orders.Add(order);
+                db.SaveChanges();
+
+                BucketView.Items.Clear();
             }
-            order.BooksInOrder = localBuscket;
-            db.Orders.Add(order);
-            db.SaveChanges();
+            else {
+                try {
+                    GuesRegistration guesRegistration = new GuesRegistration(CurrentUser);
+                    guesRegistration.ShowDialog();
+                    CurrentUser.Role = roles[1];
+                    UserName.Text = CurrentUser.Name;
+                    db.Users.Add(CurrentUser);
+
+                    Order order = new Order();
+                    order.User = CurrentUser;
+                    order.OrderDate = DateOnly.FromDateTime(DateTime.Today);
+                    order.DeliveryDate = order.OrderDate.AddDays(7);
+
+                    ObservableCollection<BooksInOrder> localBuscket = new ObservableCollection<BooksInOrder>();
+
+                    foreach(Book book in Bucket) {
+                        BooksInOrder booksInOrder = new BooksInOrder {
+                            OrderId = order,
+                            BookId = book
+                        };
+                        localBuscket.Add(booksInOrder);
+                        db.BooksInOrders.Add(booksInOrder);
+                    }
+                    order.BooksInOrder = localBuscket;
+                    db.Orders.Add(order);
+                    db.SaveChanges();
+                    BucketView.Items.Clear(); 
+
+                    MessageBox.Show("Заказ успешно оформлен! \n Доставим в течение 7 дней.", "Ура", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
+                catch {
+                    MessageBox.Show("Похоже, Вы ввели не все данные или введенные данные некорректны!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
         private void FavouriteChkBx_Checked(object sender, RoutedEventArgs e) {
             Book book = (Book)((CheckBox)sender).DataContext;
 
             if((bool)!book.IsFavourite) {
+                
                 book.IsFavourite = true;
                 FavouriteList favouriteList = new FavouriteList {
                     UserID = CurrentUser,
@@ -240,12 +292,14 @@ namespace DemoVar3.View {
                 };
                 CurrentUser.FavouriteList.Add(favouriteList);
 
-                BookDG.ItemsSource = PagedBooks.ToList();
+                PagedBooks = PagedBooks.OrderByDescending(b => b.IsFavourite).ToList();
+                BookDG.ItemsSource = PagedBooks;
                 BookDG.Items.Refresh();
             }
             else {
                 book.IsFavourite = false;
-                BookDG.ItemsSource = PagedBooks.ToList();
+                PagedBooks.OrderByDescending(b => b.IsFavourite).ToList();
+                BookDG.ItemsSource = PagedBooks;
                 BookDG.Items.Refresh();
             }
         }

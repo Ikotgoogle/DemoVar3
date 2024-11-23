@@ -24,7 +24,7 @@
 
         <StackPanel Grid.Row="2" Grid.Column="1">
             <TextBlock Text="Логин"/>
-            <TextBox x:Name="LoginTxtBox" Margin="2" Text="IvanLE"/>
+            <TextBox x:Name="LoginTxtBox" Margin="2" Text="User"/>
             <TextBlock Text="Пароль"/>
             <TextBox x:Name="PswdTxtBox" Margin="2" Text="123"/>
         </StackPanel>

@@ -54,7 +54,8 @@ namespace DemoVar3 {
         }
 
         private void VisitorEnter_Click(object sender, RoutedEventArgs e) {
-            WorkWindow workWindow = new WorkWindow();
+            User guest = new() { Role = roles[2], Name = "Гость" };
+            UserWindow workWindow = new UserWindow(guest);
             workWindow.Show();
             this.Close();
         }

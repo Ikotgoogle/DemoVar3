@@ -1,0 +1,58 @@
+﻿<Window x:Class="DemoVar3.View.NewUser"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DemoVar3.View"
+        mc:Ignorable="d"
+        Title="NewUser" Height="450" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="0.2*"/>
+            <ColumnDefinition/>
+            <ColumnDefinition Width="0.2*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="Создание пользователя" FontSize="20"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Grid.Row="1">
+            <TextBlock Text="Имя пользователя"/>
+            <TextBox x:Name="NewUserName" />
+        </StackPanel>
+        <StackPanel Grid.Column="1" Grid.Row="2">
+            <TextBlock Text="Номер телефона"/>
+            <TextBox x:Name="NewUserTelNum"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Grid.Row="3">
+            <TextBlock Text="Адрес доставки"/>
+            <TextBox x:Name="NewUserDelAddress"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Grid.Row="4">
+            <TextBlock Text="Логин"/>
+            <TextBox x:Name="NewUserLogin"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Grid.Row="5">
+            <TextBlock Text="Пароль"/>
+            <TextBox x:Name="NewUserPassword"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Grid.Row="6">
+            <TextBlock Text="Роль"/>
+            <ComboBox x:Name="NewUserRole"/>
+        </StackPanel>
+        <StackPanel Grid.Column="1" Grid.Row="7">
+            <Button x:Name="CreateUser" Content="Создать" IsDefault="True" Click="CreateUser_Click" />
+        </StackPanel>
+    </Grid>
+</Window>

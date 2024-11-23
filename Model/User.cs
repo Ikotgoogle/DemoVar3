@@ -14,7 +14,7 @@ namespace DemoVar3.Model {
         public string Login { get; set; }
         public string Password { get; set; }
         public string? Role { get; set; }
-        public ObservableCollection<FavouriteList>? FavouriteList { get; set; }
-        public ObservableCollection<Order>? Orders { get; set; }
+        public ObservableCollection<FavouriteList> FavouriteList { get; set; } = new ObservableCollection<FavouriteList>();
+        public ObservableCollection<Order> Orders { get; set; } = new ObservableCollection<Order>();
     }
 }

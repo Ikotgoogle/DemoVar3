@@ -16,7 +16,7 @@ namespace DemoVar3.Model {
         public string Composition { get; set; } // состав продукта
         public string MeasuaringValue { get; set; }
         public int Cost { get; set; }
-        public bool? IsFavourite { get; set; }
+        public bool IsFavourite { get; set; }
         public ObservableCollection<FavouriteList>? FavouriteList { get; set; }
         public ObservableCollection<BooksInOrder>? BooksInOrders { get; set; }
     }

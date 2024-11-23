@@ -199,6 +199,20 @@ namespace DemoVar3.View {
             db.SaveChanges();
         }
 
+        private void NewUser_Click(object sender, RoutedEventArgs e) {
+            User u = new User();
+            try {
+                NewUser newUser = new NewUser(u);
+                newUser.ShowDialog();
+                db.Users.Add(u);
+                db.SaveChanges();
+            }
+            catch {
+                MessageBox.Show("Похоже, Вы ввели не все данные или введенные данные некорректны!", "Error!", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            
+        }
+
         private void Next_Click(object sender, RoutedEventArgs e) {
             if(_CurrentPage == maxPage) { return; }
             PagedBooks.Clear();

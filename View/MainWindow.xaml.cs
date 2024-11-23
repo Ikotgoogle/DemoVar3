@@ -11,11 +11,14 @@ namespace DemoVar3 {
         List<string> roles = new List<string>() { "Администратор", "Пользователь", "Гость" };
         public MainWindow() {
             InitializeComponent();
+            db.Database.EnsureDeleted();
             db.Database.EnsureCreated();
 
-            //User a = new User() { Name = "Ivan", TelNum = "123", DeliveryAddress = "Home", Login = "IvanLE", Password = "123", Role = "Администратор" };
-            //db.Users.Add(a);
-            //db.SaveChanges();
+            User a = new User() { Name = "Ivan", TelNum = "123", DeliveryAddress = "Home", Login = "IvanLE", Password = "123", Role = "Администратор" };
+            User a1 = new User() { Name = "User", TelNum = "123", DeliveryAddress = "Test", Login = "User", Password = "123", Role = "Пользователь" };
+            db.Users.Add(a);
+            db.Users.Add(a1);
+            db.SaveChanges();
 
             db.Users.Load();
 
@@ -36,12 +39,16 @@ namespace DemoVar3 {
             User user = FindUser(login, password);
             
             if(user == null) {
-                MessageBox.Show("Пользователь не найден!", "Error");
+                MessageBox.Show("Пользователь не найден!", "Error"); return;
             }
 
             if(user.Role == roles[0]) {
                 WorkWindow workWindow = new WorkWindow();
                 workWindow.Show();
+                this.Close();
+            } else if (user.Role == roles[1]) {
+                UserWindow userWindow = new UserWindow(user);
+                userWindow.Show();
                 this.Close();
             }
         }

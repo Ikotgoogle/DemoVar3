@@ -14,7 +14,9 @@ namespace DemoVar3.Model {
         public DbSet<BooksInOrder> BooksInOrders { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-            optionsBuilder.UseSqlServer(@"Server=.;Database=DemoVar3DB1;TrustServerCertificate=True;Trusted_Connection=True;");
+            optionsBuilder
+                .UseSqlServer(@"Server=.;Database=DemoVar3DB2;TrustServerCertificate=True;Trusted_Connection=True;")
+                .EnableSensitiveDataLogging(); // Enable sensitive data logging
         }
     }
 }

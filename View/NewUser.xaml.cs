@@ -19,7 +19,7 @@ namespace DemoVar3.View {
     /// </summary>
     public partial class NewUser : Window {
         public User User { get; set; }
-        List<string> roles = new List<string>() { "Администратор", "Пользователь", "Гость" };
+        List<string> roles = new List<string>() { "Администратор", "Пользователь"};
         public NewUser(User u) {
             InitializeComponent();
             User = u;

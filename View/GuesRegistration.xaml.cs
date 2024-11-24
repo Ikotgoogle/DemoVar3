@@ -18,17 +18,17 @@ namespace DemoVar3.View {
     /// Логика взаимодействия для GuesRegistration.xaml
     /// </summary>
     public partial class GuesRegistration : Window {
-        public User User { get; set; }        
+        public User Guest { get; set; }        
         public GuesRegistration(User guest) {
             InitializeComponent();
-            User = guest;
+            Guest = guest;
         }
         private void CreateUser_Click(object sender, RoutedEventArgs e) {
-            User.Name = NewUserName.Text;
-            User.TelNum = NewUserTelNum.Text;
-            User.DeliveryAddress = NewUserDelAddress.Text;
-            User.Login = NewUserLogin.Text;
-            User.Password = NewUserPassword.Text;
+            Guest.Name = NewUserName.Text;
+            Guest.TelNum = NewUserTelNum.Text;
+            Guest.DeliveryAddress = NewUserDelAddress.Text;
+            Guest.Login = NewUserLogin.Text;
+            Guest.Password = NewUserPassword.Text;
             DialogResult = true;
         }
     }

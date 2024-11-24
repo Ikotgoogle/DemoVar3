@@ -81,7 +81,6 @@
 
                 <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Button x:Name="MakeOrder" Content="Оформить заказ" Width="120" Height="20" Click="MakeOrder_Click" Margin="5"/>
-                    <Button x:Name="History" Content="История" Width="120" Height="20" Click="MakeOrder_Click" Margin="5"/>
                 </StackPanel>
 
                 <StackPanel HorizontalAlignment="Center" Grid.Column="1">

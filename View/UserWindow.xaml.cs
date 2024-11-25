@@ -204,7 +204,8 @@ namespace DemoVar3.View {
                 order.BooksInOrder = localBuscket;
                 db.Orders.Add(order);
                 db.SaveChanges();
-                BucketView.ItemsSource = new ObservableCollection<BooksInOrder>();
+                Bucket.Clear();
+                BucketView.ItemsSource = Bucket.ToList();
                 BucketView.Items.Refresh();
                 MessageBox.Show("Заказ успешно оформлен! \n Доставим в течение 7 дней.", "Ура", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
@@ -247,7 +248,10 @@ namespace DemoVar3.View {
         }
         private void FavouriteChkBx_Checked(object sender, RoutedEventArgs e) {
             Book book = (Book)((CheckBox)sender).DataContext;
-
+            if (CurrentUser == null) {
+                MessageBox.Show("Необходим аккаунт!");
+                return;
+            }
             if((bool)!book.IsFavourite) {
                 
                 book.IsFavourite = true;

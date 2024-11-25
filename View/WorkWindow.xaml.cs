@@ -91,12 +91,14 @@ namespace DemoVar3.View {
             
             List<Book> filteredBooks = Books.Where(b=> b.Category == filter).ToList();
             maxPage = filteredBooks.Count / amount + 1;
+            try {
+                for(int i = startId - 1; i < amount * _CurrentPage; i++) {
+                    PagedBooks.Add(filteredBooks[i]);
+            }} catch { }
 
-            for(int i = startId - 1; i < amount * _CurrentPage; i++) {
-                PagedBooks.Add(filteredBooks[i]);
-            }
             BookDG.ItemsSource = PagedBooks.ToList();
             BookDG.Items.Refresh();
+            
         }
 
         private void ClearFinter_Click(object sender, RoutedEventArgs e) {
@@ -146,6 +148,10 @@ namespace DemoVar3.View {
             order.BooksInOrder = localBuscket;
             db.Orders.Add(order);
             db.SaveChanges();
+            Bucket.Clear();
+            BucketView.ItemsSource = new ObservableCollection<Book>();
+            BucketView.Items.Refresh();
+            MessageBox.Show("Заказ успешно оформлен! \n Доставим в течение 7 дней.", "Ура", MessageBoxButton.OK, MessageBoxImage.Exclamation);
         }
 
         private void NewUser_Click(object sender, RoutedEventArgs e) {
